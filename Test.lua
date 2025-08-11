@@ -56,6 +56,7 @@ if not _G.candyhub then _G.candyhub = {
     maxfps = 0,
     mode = "SuperFast",
     autotake = true,
+    auto_craft_moondred = false,
     items = {
         propeller_2 = false,
         shield = false,
@@ -1391,44 +1392,64 @@ me:Checkbox({
         if v then
             task.spawn(function()
                 
-                local moondredItems = {
-                    "blood_block",    
-                    "blood_lantern",  
-                    "blood_tail",     
-                    "blood_throne"
-                }
+                local craftingList = game:GetService("ReplicatedStorage").Remotes.CraftingEvents.GetList:InvokeServer()
                 
-                local player = game:GetService("Players").LocalPlayer
-                local redMoons = player.Important.RedMoons.Value
                 
-               
+                local moondredItems = {}
+                for itemName, itemData in pairs(craftingList) do
+                    if string.find(itemName:lower(), "blood_") or string.find(itemName:lower(), "moondred") then
+                        table.insert(moondredItems, itemName)
+                    end
+                end
+                
+                
+                if #moondredItems == 0 then
+                    moondredItems = {
+                        "blood_block",
+                        "blood_lantern",
+                        "blood_tail",
+                        "blood_throne"
+                    }
+                end
+                
+                
                 for _, itemName in ipairs(moondredItems) do
-                    if not _G.candyhub.auto_craft_moondred then break end
+                    if not _G.candyhub.auto_craft_moondred then break end 
                     
                     
-                    if game:GetService("ReplicatedStorage").Remotes.ShopEvents:FindFirstChild("BuyBlock") then
+                    local canCraft, craftInfo = pcall(function()
+                        return game:GetService("ReplicatedStorage").Remotes.CraftingEvents.GetList:InvokeServer()[itemName]
+                    end)
+                    
+                    if canCraft and craftInfo then
                         
-                        local success, err = pcall(function()
-                            game:GetService("ReplicatedStorage").Remotes.ShopEvents.BuyBlock:FireServer(itemName)
+                        local success, result = pcall(function()
+                            return game:GetService("ReplicatedStorage").Remotes.CraftingEvents.Craft:InvokeServer(itemName)
                         end)
                         
-                        if not success then
-                            warn("Failed "..itemName..": "..err)
+                        if success then
+                            print("Suc:", itemName)
                         else
-                            print("Suc: "..itemName)
+                            warn("Failed", itemName, ":", result)
                         end
+                    else
+                        warn("None:", itemName)
                     end
                     
-                    task.wait(0.3) -- 
+                    task.wait(0.5) 
                 end
                 
                 
                 if _G.candyhub.auto_craft_moondred then
+                    self:SetValue(false) 
+                    _G.candyhub.auto_craft_moondred = false
+                    savecfg()
+                    
                     local notif = ReGui:PopupModal({
                         Title = "Craft Complete",
                     })
                     notif:Label({
-                        Text = "All Dr.MoondRed items have been crafted!",
+                        Text = "Done",
                         TextWrapped = true
                     })
                     notif:Button({
