@@ -1232,7 +1232,7 @@ print("11:800")
 
 local events = Window:CreateTab({Name = "Events"})
 local me = events:CollapsingHeader({Title="Moon Event",Collapsed=false,NoArrow=false,OpenOnArrow=false})
---[[
+
 local mi = events:CollapsingHeader({Title="Stats",Collapsed=false});mi:SetVisible(false)
 local ml1 = mi:Label({Text = "Money Earned: 0"})
 local ml2 = mi:Label({Text = "Moon Coins Earned: 0"})
@@ -1335,7 +1335,6 @@ me:Combo({
         end)
     end
 })
-]]
 
 me:Checkbox({
 	Value = _G.candyhub.superfarmer or false,
@@ -1367,6 +1366,7 @@ me:Checkbox({
         end)
 	end
 })
+
 me:Checkbox({
 	Value = _G.candyhub.autodust or false,
 	Label = "Auto Dust (Doesnt Refresh) (OP)",
