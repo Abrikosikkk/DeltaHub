@@ -1381,6 +1381,46 @@ me:Checkbox({
 	end
 })
 
+local function craftAllDrMoondRed()
+    local items = {
+        "blood_block",   -- Blood Blocks
+        "blood_lantern", -- Blood Lantern
+        "blood_tail",    -- Blood Tail
+        "blood_throne"   -- Blood Throne
+    }
+    for _, itemName in ipairs(items) do
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
+            :WaitForChild("ShopEvents")
+            :WaitForChild("BuyBlock")
+            :FireServer(itemName)
+        task.wait(0.1)
+    end
+end
+
+me:Button({
+    Text = "Craft All Dr.MoondRed Items",
+    Callback = function(self)
+        task.spawn(craftAllDrMoondRed)
+    end
+})
+
+me:Checkbox({
+	Value = _G.candyhub.machine,
+	Label = "Auto Unlock Machine",
+	Callback = function(self, v: boolean)
+        task.spawn(function()
+            _G.candyhub.abs=v;savecfg()
+            while _G.candyhub.abs and not game:GetService("Players").LocalPlayer.Important.Eclipse.Value and task.wait(1) do
+                if game:GetService("Players").LocalPlayer.Important.Eclipse.Value ~= false then
+                    game:GetService("ReplicatedStorage").Remotes.SpectialEvents.MachineActivated:FireServer()
+                end
+            end
+        end)
+	end
+})
+
+
+
 me:Checkbox({
 	Value = _G.candyhub.infmoney or false,
 	Label = "Inf Money",
