@@ -1379,7 +1379,7 @@ me:Checkbox({
             end
         end)
 	end
-})]]
+})
 
 me:Checkbox({
 	Value = _G.candyhub.abs,
