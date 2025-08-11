@@ -1381,26 +1381,29 @@ me:Checkbox({
 	end
 })
 
-local function craftAllDrMoondRed()
-    local items = {
-        "blood_block",   -- Blood Blocks
-        "blood_lantern", -- Blood Lantern
-        "blood_tail",    -- Blood Tail
-        "blood_throne"   -- Blood Throne
-    }
-    for _, itemName in ipairs(items) do
-        game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
-            :WaitForChild("ShopEvents")
-            :WaitForChild("BuyBlock")
-            :FireServer(itemName)
-        task.wait(0.1)
-    end
-end
-
-me:Button({
-    Text = "Craft All Dr.MoondRed Items",
-    Callback = function(self)
-        task.spawn(craftAllDrMoondRed)
+me:Checkbox({
+    Value = false, 
+    Label = "Auto Craft All Dr.MoondRed Items",
+    Callback = function(self, v: boolean)
+        task.spawn(function()
+            if v then
+                local items = {
+                    "blood_block",   -- Blood Blocks
+                    "blood_lantern", -- Blood Lantern
+                    "blood_tail",    -- Blood Tail
+                    "blood_throne"   -- Blood Throne
+                }
+                for _, itemName in ipairs(items) do
+                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
+                        :WaitForChild("ShopEvents")
+                        :WaitForChild("BuyBlock")
+                        :FireServer(itemName)
+                    task.wait(0.1)
+                end
+                -- value
+                self:SetValue(false)
+            end
+        end)
     end
 })
 
