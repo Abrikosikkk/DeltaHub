@@ -1382,28 +1382,64 @@ me:Checkbox({
 })
 
 me:Checkbox({
-    Value = false, 
-    Label = "Auto Craft All Dr.MoondRed Items",
+    Value = _G.candyhub.auto_craft_moondred,
+    Label = "Auto Craft Dr.MoondRed Items",
     Callback = function(self, v: boolean)
-        task.spawn(function()
-            if v then
-                local items = {
-                    "blood_block",   -- Blood Blocks
-                    "blood_lantern", -- Blood Lantern
-                    "blood_tail",    -- Blood Tail
-                    "blood_throne"   -- Blood Throne
+        _G.candyhub.auto_craft_moondred = v
+        savecfg()
+        
+        if v then
+            task.spawn(function()
+                
+                local moondredItems = {
+                    "blood_block",    
+                    "blood_lantern",  
+                    "blood_tail",     
+                    "blood_throne"
                 }
-                for _, itemName in ipairs(items) do
-                    game:GetService("ReplicatedStorage"):WaitForChild("Remotes")
-                        :WaitForChild("ShopEvents")
-                        :WaitForChild("BuyBlock")
-                        :FireServer(itemName)
-                    task.wait(0.1)
+                
+                local player = game:GetService("Players").LocalPlayer
+                local redMoons = player.Important.RedMoons.Value
+                
+               
+                for _, itemName in ipairs(moondredItems) do
+                    if not _G.candyhub.auto_craft_moondred then break end
+                    
+                    
+                    if game:GetService("ReplicatedStorage").Remotes.ShopEvents:FindFirstChild("BuyBlock") then
+                        
+                        local success, err = pcall(function()
+                            game:GetService("ReplicatedStorage").Remotes.ShopEvents.BuyBlock:FireServer(itemName)
+                        end)
+                        
+                        if not success then
+                            warn("Failed "..itemName..": "..err)
+                        else
+                            print("Suc: "..itemName)
+                        end
+                    end
+                    
+                    task.wait(0.3) -- 
                 end
-                -- value
-                self:SetValue(false)
-            end
-        end)
+                
+                
+                if _G.candyhub.auto_craft_moondred then
+                    local notif = ReGui:PopupModal({
+                        Title = "Craft Complete",
+                    })
+                    notif:Label({
+                        Text = "All Dr.MoondRed items have been crafted!",
+                        TextWrapped = true
+                    })
+                    notif:Button({
+                        Text = "OK",
+                        Callback = function()
+                            notif:ClosePopup()
+                        end,
+                    })
+                end
+            end)
+        end
     end
 })
 
