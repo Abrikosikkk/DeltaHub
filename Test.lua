@@ -1472,7 +1472,7 @@ me:Checkbox({
             _G.candyhub.superfarmer=v;savecfg()
             game:GetService("CoreGui").PurchasePromptApp.Enabled = not _G.candyhub.superfarmer
             task.spawn(function() 
-                for i = 1, 10000 do
+                for i = 1, 5000 do
                     task.spawn(function() 
                         while _G.candyhub.superfarmer and task.wait() do
                             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("EventEvents"):WaitForChild("SpawnEvilEye"):InvokeServer()
