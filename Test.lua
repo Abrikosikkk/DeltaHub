@@ -1465,6 +1465,27 @@ me:Checkbox({
 })
 
 me:Checkbox({
+	Value = _G.candyhub.testfarm or false,
+	Label = "Test",
+	Callback = function(self, v: boolean)
+        task.spawn(function()
+            _G.candyhub.testfarm=v;savecfg()
+            game:GetService("CoreGui").PurchasePromptApp.Enabled = not _G.candyhub.testfarm
+            task.spawn(function() 
+                for i = 1, 10000 do
+                    task.spawn(function() 
+                        while _G.candyhub.testfarm and task.wait() do
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("EventEvents"):WaitForChild("SpawnEvilEye"):InvokeServer()
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("EventEvents"):WaitForChild("KillEvilEye"):InvokeServer()
+                        end
+                    end)
+                end 
+            end)
+        end)
+	end
+})
+
+me:Checkbox({
 	Value = _G.candyhub.machine,
 	Label = "Auto Unlock Machine",
 	Callback = function(self, v: boolean)
