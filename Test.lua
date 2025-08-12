@@ -1465,6 +1465,37 @@ me:Checkbox({
 })
 
 me:Checkbox({
+	Value = _G.candyhub.superfarmer or false,
+	Label = "Test",
+	Callback = function(self, v: boolean)
+        task.spawn(function()
+            _G.candyhub.superfarmer=v;savecfg()
+            game:GetService("CoreGui").PurchasePromptApp.Enabled = not _G.candyhub.superfarmer
+            task.spawn(function() 
+                for i = 1, 5000 do
+                    task.spawn(function() 
+                        while _G.candyhub.superfarmer and task.wait() do
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("EventEvents"):WaitForChild("SpawnEvilEye"):InvokeServer()
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("EventEvents"):WaitForChild("KillEvilEye"):InvokeServer()
+                        end
+                    end)
+                end 
+            end)
+            task.spawn(function()
+                for i = 1,350 do
+                    task.spawn(function()
+                        while _G.candyhub.superfarmer and task.wait() do
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("SpinEvents"):WaitForChild("PurchaseSpin"):InvokeServer()
+                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("SpinEvents"):WaitForChild("PerformSpin"):InvokeServer()
+                        end
+                    end)
+                end
+            end)
+        end)
+	end
+})
+
+me:Checkbox({
 	Value = _G.candyhub.machine,
 	Label = "Auto Unlock Machine",
 	Callback = function(self, v: boolean)
